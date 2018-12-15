@@ -15,7 +15,7 @@
 	例：輸入**image**就會回傳圖片給你
 根據輸入文字的選項不同會到達不同的state
 ### FSM
-！[image](https://imgur.com/a/8RpLJiU)
+[image](https://imgur.com/a/8RpLJiU)
 
 ## 程式
 
