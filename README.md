@@ -2,7 +2,7 @@
 
 ## 介紹
 
-#### 用法
+### 用法
 	一開始的state是在user
 	有兩種輸入
 		1. hello （開始使用）
@@ -14,25 +14,25 @@
 		2. ....(幾個選項可以輸入）
 		例：輸入**image**就會回傳圖片給你
 	根據輸入文字的選項不同會到達不同的state
-#### FSM
+### FSM
 	！[image](https://imgur.com/a/8RpLJiU)
 
 ## 程式
 
-#### 用法
+### 用法
 	* 執行app.py
-	```
+	```sh
 	python app.py
 	```
 	* 執行ngrok
-	```
+	```sh
 	./ngrok http 5006
 	```
 	複製ngrok產生的https網址到facebook的webhook的回忽網址 後面加上/webhook
 	驗證權杖為1234
 	有連通的話分私團就能回傳訊息了（可用test測試）
 
-#### 程式碼
+### 程式碼
 	* **send_text_message（name,text）**
 		功能：傳送文字
 			 name為收訊息的id
