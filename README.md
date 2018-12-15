@@ -32,7 +32,7 @@ python app.py
 驗證權杖為1234
 有連通的話分私團就能回傳訊息了（可用test測試）
 
-### 程式碼
+### 程式function介紹
 * **send_text_message（name,text）**
 	功能：傳送文字
 		 name為收訊息的id
@@ -50,4 +50,5 @@ python app.py
 	設定Finite state machine在不同state下的工作
 * **show_fsm()**
 	畫出Finite state machine的圖	
+**其他細節打在註解裡**
 
