@@ -73,7 +73,15 @@ python app.py
      回傳分斷好的句子
 	
   作法：將輸入近來的文字跟從教育部下載的字典（dict1 dict2 dict3）進行比對
-
+  
+  例：
+  ```
+     輸入：今天午餐吃什麼
+     輸出：今天
+     	  午餐
+	  吃
+	  什麼
+  ```
 * **TocMachine(GraphMachine)**
 	
   設定Finite state machine在不同state下的工作
