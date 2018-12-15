@@ -1,63 +1,53 @@
-# TOC Project 2019
+# F74051255 TOC Project 2019
 
-Template Code for TOC Project 2019
+## 介紹
 
-A Facebook messenger bot based on a finite state machine
+#### 用法
+	一開始的state是在user
+	有兩種輸入
+		1. hello （開始使用）
+		2. test (用來測試是否開始 因為有時候要等一段時間)
+	輸入hello之後會跳出
+		Hello
+		How can I help you?
+		1. ....
+		2. ....(幾個選項可以輸入）
+		例：輸入**image**就會回傳圖片給你
+	根據輸入文字的選項不同會到達不同的state
+#### FSM
+	！[image](https://imgur.com/a/8RpLJiU)
 
-More details in the [Slides](https://hackmd.io/p/SkpBR-Yam#/)
+## 程式
 
-## Setup
+#### 用法
+	* 執行app.py
+	```
+	python app.py
+	```
+	* 執行ngrok
+	```
+	./ngrok http 5006
+	```
+	複製ngrok產生的https網址到facebook的webhook的回忽網址 後面加上/webhook
+	驗證權杖為1234
+	有連通的話分私團就能回傳訊息了（可用test測試）
 
-### Prerequisite
-* Python 3
-* Facebook Page and App
-* HTTPS Server
+#### 程式碼
+	* **send_text_message（name,text）**
+		功能：傳送文字
+			 name為收訊息的id
+			 text為要傳送的訊息
+	* **send_image_message（name,text）**
+		功能：傳送圖片
+			 name為收訊息的id
+			 text為要傳送圖片的url
+	* **NLP_func(text）**
+		功能：將中文具字進行斷句
+			 text為要分斷的句子
+			 回傳分斷好的句子
+		作法：將輸入近來的文字跟從教育部下載的字典（dict1 dict2 dict3）進行比對
+	* **TocMachine(GraphMachine)**
+		設定Finite state machine在不同state下的工作
+	* **show_fsm()**
+		畫出Finite state machine的圖	
 
-#### Install Dependency
-```sh
-pip install -r requirements.txt
-```
-
-* pygraphviz (For visualizing Finite State Machine)
-    * [Setup pygraphviz on Ubuntu](http://www.jianshu.com/p/a3da7ecc5303)
-
-#### Secret Data
-
-`VERIFY_TOKEN` and `ACCESS_TOKEN` **MUST** be set to proper values.
-Otherwise, you might not be able to run your code.
-
-#### Run Locally
-You can either setup https server or using `ngrok` as a proxy.
-
-**`ngrok` would be used in the following instruction**
-
-```sh
-./ngrok http 5000
-```
-
-After that, `ngrok` would generate a https URL.
-
-#### Run the sever
-
-```sh
-python3 app.py
-```
-
-## Finite State Machine
-![fsm](./img/show-fsm.png)
-
-## Usage
-The initial state is set to `user`.
-
-Every time `user` state is triggered to `advance` to another state, it will `go_back` to `user` state after the bot replies corresponding message.
-
-* user
-	* Input: "go to state1"
-		* Reply: "I'm entering state1"
-
-	* Input: "go to state2"
-		* Reply: "I'm entering state2"
-
-
-## Reference
-[TOC-Project-2017](https://github.com/Lee-W/TOC-Project-2017) ❤️ [@Lee-W](https://github.com/Lee-W)
