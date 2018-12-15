@@ -77,10 +77,11 @@ python app.py
   例：
   ```
      輸入：今天午餐吃什麼
-     輸出：今天
-     	  午餐
-	  吃
-	  什麼
+     輸出：
+          今天
+          午餐
+          吃
+          什麼
   ```
 * **TocMachine(GraphMachine)**
 	
