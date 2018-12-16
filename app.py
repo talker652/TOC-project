@@ -11,13 +11,19 @@ import sys
 GRAPH_URL="https://graph.facebook.com/v2.6"
 PAGE_TOKEN="EAAIRVs2seX4BAIwlMS5x1y6ZBzGXnQSZAtVNzpOS5NuZCFkWZCWV9ZBgwP8LrFhpZCn0DfAbtDlR4HIDPs0rW4IY9Lfs5fk4MTECZBZBlfxVZCQdZApM8RHg8ZAIhfLCryYNCg1uPtk8m5uSBVizrU0spUuSqk04GZCvhjzj8bsXiEJZCFgZDZD"
 VERIFY_TOKEN="1234"
-"""
-ACCESS_TOKEN=os.environ["ACCESS_TOKEN"]
-VERIFY_TOKEN=os.environ["VERIFY_TOKEN"]
-PORT=os.environ["PORT"]
-"""
 
 state1_time = 0
+
+ans = ''
+
+def random_ans():
+	import random
+	digit = ('0123456789')
+	global ans
+	ans = ''.join(random.sample(digit, 4))
+	return ans
+
+ans = random_ans()
 
 def send_text_message(name,text):
 	url="{0}/me/messages?access_token={1}".format(GRAPH_URL,PAGE_TOKEN)
@@ -106,10 +112,44 @@ def NLP_func(text):
 			break
 	return string
 
+count = 0
 
-class TocMachine(GraphMachine):
+def Game(name,text):
+	global count
+	global ans
+	word = ''
+	while 1:
+		count += 1
+		a, b = 0, 0
+		while 1:
+			word = text
+			if len(word) == 4:
+				break
+		for i in range(4):
+			if word[i] == ans[i]:
+				a += 1
+			elif word[i] in ans:
+				b += 1
+		result = str(a) + 'A' + str(b) +'B' 
+		if word == ans:
+			return 'Correct!! Use ' + str(count) + ' times'
+		else :
+			return result
+		
+		
+
+class TocMachine(GraphMachine):		#set the function when state transition
 	def __init__(self,**machine_configs):
 		self.machine=GraphMachine(model=self,**machine_configs)
+
+	def force_state1(self,event):
+		print("force going to state1")
+		if event.get("message"):
+			text=event["message"]["text"]
+			print(text)
+			if text.lower() == "go back":
+				return True
+		return False
 
 	def is_going_to_state1(self,event):
 		if event.get("message"):
@@ -130,7 +170,7 @@ class TocMachine(GraphMachine):
 	def is_going_to_state3(self,event):
 		if event.get("message"):
 			text=event["message"]["text"]
-			return text.lower() == "image"
+			return text.lower() == "give me image"
 		return False
 	
 	def is_going_to_image(self,event):
@@ -142,7 +182,6 @@ class TocMachine(GraphMachine):
 		if event.get("message"):
 			text=event["message"]["text"]
 			print(text)
-			text1 = '測試'
 			if text.lower() == "nlp":
 				return True
 		return False
@@ -157,11 +196,30 @@ class TocMachine(GraphMachine):
 			return False
 		return False
 
+	def is_going_to_game(self,event):
+		if event.get("message"):
+			text=event["message"]["text"]
+			print(text)
+			if text.lower() == "game":
+				return True
+		return False
+	def is_going_to_guess(self,event):
+		print("im going to str")
+		if event.get("message"):
+			text=event["message"]["text"]
+			print(text)
+			if len(text) == 4:
+				return True
+		return False
+
 	def on_enter_state1(self, event):
 		print("I'm entering state1")
+		global state1_time
+		state1_time = state1_time + 1
 		sender_id=event['sender']['id']
-		responese=send_text_message(sender_id,"Hello")
-		responese=send_text_message(sender_id,"How can I help you?\n1.Can you speak Chinese?\n2.image\n3.NLP\n4.Game")
+		if state1_time == 1:
+			responese=send_text_message(sender_id,"Hello")
+		responese=send_text_message(sender_id,"How can I help you?\n1.Can you speak Chinese?\n2.Give me image\n3.NLP\n4.Game")
 		print(machine.state)
 		# self.go_back1()
 	def on_exit_state1(self,event):   #add a event
@@ -192,6 +250,31 @@ class TocMachine(GraphMachine):
 	def on_exit_str(self,event):
 		print("Leaving str")
 
+	def on_enter_game(self, event):
+		print("I'm entering game")
+		global ans
+		print(ans)
+		sender_id=event['sender']['id']
+		responese=send_text_message(sender_id,"請輸入4位數字...")
+	def on_exit_game(self,event):
+		print("Leaving game")
+
+	def on_enter_guess(self, event):
+		print("I'm entering guess")
+		text=event["message"]["text"]
+		sender_id=event['sender']['id']
+		string = Game(sender_id,text)
+		if 'C' == string[0]:
+			responese=send_text_message(sender_id,string)
+			global ans
+			ans = random_ans()
+			self.go_back_state1(event)
+		else:
+			responese=send_text_message(sender_id,string)
+			self.go_back_game(event)
+	def on_exit_guess(self,event):
+		print("Leaving guess")
+
 	def on_enter_test(self, event):
 		print("I'm entering test")
 		sender_id=event['sender']['id']
@@ -204,6 +287,7 @@ class TocMachine(GraphMachine):
 		print("I'm entering state3")
 		show_fsm()
 		sender_id=event['sender']['id']
+		responese=send_text_message(sender_id,"NO")
 		responese=send_text_message(sender_id,"░░░░░░██░░░░░░\n░░░░░█░░█░░░░░\n░░░░░█░░█░░░░░ \n░░░░░█░░█░░░░░\n░░░░░█░░█░░░░░\n░░████░░███░░░\n███░░█░░█░░██░\n█░█░░█░░█░░█░█\n█░░░░░░░░░░█░█\n█░░░░░░░░░░░░█\n█░░░░░░░░░░██░\n███░░░░░░░██░░\n░▀▀███████░░░░")
 		responese=send_text_message(sender_id,"Say please")
 		# self.go_back()
@@ -213,23 +297,25 @@ class TocMachine(GraphMachine):
 	def on_enter_image(self, event):
 		print("I'm entering image")
 		sender_id=event['sender']['id']
-		responese=send_image_message(sender_id, "https://ips.pepitastore.com/storefront/img/resized/squareenix-store-v2/6876aeaa8225882ec8c63114942bb9a3_1920_KR.jpg")
+		responese=send_image_message(sender_id, "https://i.imgur.com/78kebjH.jpg?1")
 		self.go_back_state1(event)
 	def on_exit_image(self,event):
 		print("Leaving image")
 
 
 
-machine=TocMachine(
+machine=TocMachine(		#set state and transition
 	states=[
 		"user",
 		"state1",
 		"test",
-		"state3",	#fake image
 		"chinese",
+		"state3",	#fake image
 		"image",
 		"NLP",
-		"str"
+		"str",
+		"game",
+		"guess"
 	],
 	transitions=[
 		{
@@ -275,13 +361,39 @@ machine=TocMachine(
 			"conditions":"is_going_to_str"
 		},
 		{
+			"trigger":"advance",
+			"source":"state1",
+			"dest":"game",
+			"conditions":"is_going_to_game"
+		},
+		{
+			"trigger":"advance",
+			"source":"game",
+			"dest":"guess",
+			"conditions":"is_going_to_guess"
+		},
+
+		{
 			"trigger":"go_back_state1",
 			"source":[
 				"chinese",
 				"image",
-				"str"
+				"str",
+				"game",
+				"guess"
 			],
 			"dest":"state1"
+		},
+		{
+			"trigger":"go_back_game",
+			"source":"guess",
+			"dest":"game"
+		},
+		{
+			"trigger":"force_go_back_state1",
+			"source":"game",
+			"dest":"state1",
+			"conditions":"force_state1"
 		},
 		{
 			"trigger":"go_back",
@@ -321,9 +433,8 @@ def webhook():
 			event=body["entry"][0]["messaging"][0]
 			text=event["message"]["text"]
 			print(text)
-			text1 = '測試'
-			if text == text1.decode('utf-8'):
-				print("OK")
+			if 't' == text[0]:
+				print('OK')
 			machine.advance(event)
 			return "OK"
 
@@ -333,4 +444,6 @@ def show_fsm():
 
 if __name__ == "__main__":
 	show_fsm()
+	global ans
+	print(ans)
 	run(host="localhost",port=5006,debug=True)
