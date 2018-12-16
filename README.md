@@ -83,6 +83,26 @@ python app.py
           吃
           什麼
   ```
+
+
+* **Game(text)**
+	
+  簡單的互動遊戲
+
+  程式隨機產生一組4位數字（0~9不重複） 讓玩家來猜
+
+  如果猜對數字 但是位置不對 就為B
+
+  如果位置數字都對 就為A
+
+  例：
+
+    答案為1234
+
+    玩家猜1324
+
+    結果為2A2B
+
 * **TocMachine(GraphMachine)**
 	
   設定Finite state machine在不同state下的工作
