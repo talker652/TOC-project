@@ -9,8 +9,16 @@ import pandas as pd
 import sys
 
 GRAPH_URL="https://graph.facebook.com/v2.6"
-PAGE_TOKEN="EAAIRVs2seX4BAIwlMS5x1y6ZBzGXnQSZAtVNzpOS5NuZCFkWZCWV9ZBgwP8LrFhpZCn0DfAbtDlR4HIDPs0rW4IY9Lfs5fk4MTECZBZBlfxVZCQdZApM8RHg8ZAIhfLCryYNCg1uPtk8m5uSBVizrU0spUuSqk04GZCvhjzj8bsXiEJZCFgZDZD"
-VERIFY_TOKEN="1234"
+
+#localhost
+# ACCESS_TOKEN="EAAIRVs2seX4BAIwlMS5x1y6ZBzGXnQSZAtVNzpOS5NuZCFkWZCWV9ZBgwP8LrFhpZCn0DfAbtDlR4HIDPs0rW4IY9Lfs5fk4MTECZBZBlfxVZCQdZApM8RHg8ZAIhfLCryYNCg1uPtk8m5uSBVizrU0spUuSqk04GZCvhjzj8bsXiEJZCFgZDZD"
+# VERIFY_TOKEN="1234"
+
+
+#heroku
+ACCESS_TOKEN=os.environ["ACCESS_TOKEN"]
+VERIFY_TOKEN=os.environ["VERIFY_TOKEN"]
+PORT=os.environ["PORT"]
 
 state1_time = 0
 
@@ -26,7 +34,7 @@ def random_ans():
 ans = random_ans()
 
 def send_text_message(name,text):
-	url="{0}/me/messages?access_token={1}".format(GRAPH_URL,PAGE_TOKEN)
+	url="{0}/me/messages?access_token={1}".format(GRAPH_URL,ACCESS_TOKEN)
 	ctx={
 		"recipient":{
 			"id":name
@@ -40,7 +48,7 @@ def send_text_message(name,text):
 		print("Unable to send message: "+response.text)
 	return response
 def send_image_message(name,text):
-	url="{0}/me/messages?access_token={1}".format(GRAPH_URL,PAGE_TOKEN)
+	url="{0}/me/messages?access_token={1}".format(GRAPH_URL,ACCESS_TOKEN)
 	ctx={
 		"recipient":{
 			"id":name
@@ -433,8 +441,6 @@ def webhook():
 			event=body["entry"][0]["messaging"][0]
 			text=event["message"]["text"]
 			print(text)
-			if 't' == text[0]:
-				print('OK')
 			machine.advance(event)
 			return "OK"
 
@@ -443,7 +449,8 @@ def show_fsm():
 	return static_file("fsm.png",root="./",mimetype="image/png")
 
 if __name__ == "__main__":
-	show_fsm()
-	global ans
-	print(ans)
-	run(host="localhost",port=5006,debug=True)
+#heroku
+	run(host="0.0.0.0",port=PORT,debug=True,reload=True)
+
+#localhost	
+#	run(host="localhost",port=5006,debug=True)
