@@ -14,7 +14,6 @@ GRAPH_URL="https://graph.facebook.com/v2.6"
 # ACCESS_TOKEN="EAAIRVs2seX4BAIwlMS5x1y6ZBzGXnQSZAtVNzpOS5NuZCFkWZCWV9ZBgwP8LrFhpZCn0DfAbtDlR4HIDPs0rW4IY9Lfs5fk4MTECZBZBlfxVZCQdZApM8RHg8ZAIhfLCryYNCg1uPtk8m5uSBVizrU0spUuSqk04GZCvhjzj8bsXiEJZCFgZDZD"
 # VERIFY_TOKEN="1234"
 
-
 #heroku
 ACCESS_TOKEN=os.environ["ACCESS_TOKEN"]
 VERIFY_TOKEN=os.environ["VERIFY_TOKEN"]
@@ -293,7 +292,6 @@ class TocMachine(GraphMachine):		#set the function when state transition
 
 	def on_enter_state3(self, event):
 		print("I'm entering state3")
-		show_fsm()
 		sender_id=event['sender']['id']
 		responese=send_text_message(sender_id,"NO")
 		responese=send_text_message(sender_id,"░░░░░░██░░░░░░\n░░░░░█░░█░░░░░\n░░░░░█░░█░░░░░ \n░░░░░█░░█░░░░░\n░░░░░█░░█░░░░░\n░░████░░███░░░\n███░░█░░█░░██░\n█░█░░█░░█░░█░█\n█░░░░░░░░░░█░█\n█░░░░░░░░░░░░█\n█░░░░░░░░░░██░\n███░░░░░░░██░░\n░▀▀███████░░░░")
@@ -444,13 +442,10 @@ def webhook():
 			machine.advance(event)
 			return "OK"
 
-def show_fsm():
-	machine.get_graph().draw("fsm.png",prog="dot",format="png")
-	return static_file("fsm.png",root="./",mimetype="image/png")
+# def show_fsm():
+# 	machine.get_graph().draw("fsm.png",prog="dot",format="png")
+# 	return static_file("fsm.png",root="./",mimetype="image/png")
 
 if __name__ == "__main__":
-#heroku
 	run(host="0.0.0.0",port=PORT,debug=True,reload=True)
-
-#localhost	
-#	run(host="localhost",port=5006,debug=True)
+	# run(host="localhost",port=5006,debug=True)
